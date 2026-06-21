@@ -1,0 +1,27 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clean old CMake files
+        run: |
+          find . -type d -name ".cxx" -exec rm -rf {} +
+          rm -rf ~/.gradle/caches
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build APK
+        run: |
+          cd $(dirname $(find . -name gradlew))
+          chmod +x gradlew
+          ./gradlew clean assembleBeta --no-daemon
